@@ -21,6 +21,7 @@ var promises = [ readFilePromise('text1.txt'), readFilePromise('text2.txt'), rea
 // });
 
 Promise.all(promises).then(function(results) {
+	// results = [111, 222, 333]
 	const str = results.reduce((accumulator, currentValue) => (accumulator += currentValue));
 	console.log(str); //111222333
 });
@@ -28,6 +29,7 @@ Promise.all(promises).then(function(results) {
 console.log('done');
 /**
  * How it work 
- * ใช้หลักการเหมือนฟังก์ชัน map() นั่นเอง 
+ * Promise.all([]) ไล่ทำ promise แต่ละตัว และเมื่อทำเสร็จแล้วก็รวบผลลัพธ์มาเป็น array 
+ * เราจะได้ผลลัพธ์ 1 item ใน array ต่อหนึ่ง Promiseใช้หลักการเหมือนฟังก์ชัน map() นั่นเอง 
  * และ callback ของ then() ทำหน้าที่เป็นตัว reduce()
  */
