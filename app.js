@@ -12,11 +12,22 @@ function readFilePromise(filename) {
 
 var promises = [ readFilePromise('text1.txt'), readFilePromise('text2.txt'), readFilePromise('text3.txt') ];
 
+// Promise.all(promises).then(function(results) {
+// 	var str = '';
+// 	for (var i = 0; i < results.length; i++) {
+// 		str += results[i];
+// 	}
+// 	console.log(str);
+// });
+
 Promise.all(promises).then(function(results) {
-	var str = '';
-	for (var i = 0; i < results.length; i++) {
-		str += results[i];
-	}
-	console.log(str);
+	const str = results.reduce((accumulator, currentValue) => (accumulator += currentValue));
+	console.log(str); //111222333
 });
+
 console.log('done');
+/**
+ * How it work 
+ * ใช้หลักการเหมือนฟังก์ชัน map() นั่นเอง 
+ * และ callback ของ then() ทำหน้าที่เป็นตัว reduce()
+ */
