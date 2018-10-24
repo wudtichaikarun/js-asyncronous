@@ -132,3 +132,79 @@ Promise.race([car1, car2, car3])
     console.log('Promise Resolved', value);
   })
   .catch(err => console.log('------> Promise reject', err));
+// ********************************************************************************
+
+/** Question 5
+ * Create some code that tries to read from disk a file and times out
+ * if it takes longer than 1 seconds, use Promise.race
+ */
+
+function readFileFake(sleep) {
+  return new Promise(resolve =>
+    setTimeout(resolve, sleep, 'read file')
+  );
+}
+
+function timeout(sleep) {
+  return new Promise((_, reject) =>
+    setTimeout(reject, sleep, 'timeout')
+  );
+}
+
+// Promise.race([readFileFake(5000), timeout(1000)])
+Promise.race([readFileFake(1000), timeout(5000)])
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+
+//readFileFake(5000); // resolves a promise after 5 seconds, pretend it's a large file being read from disk
+
+// ********************************************************************************
+
+/** Question 6
+ * Create a prosess flow which publishes a file from a server, then realises the suer needs to login,
+ * then makes a login request, the whole chain should error out if it takes longer than 1 seconds.
+ * Use `catch` to handle errors and timeours.
+ */
+
+function authenticate() {
+  console.log('Authenticating');
+  return new Promise(resolve =>
+    setTimeout(resolve, 2000, { status: 200 })
+  );
+}
+
+function publish() {
+  console.log('Publishing');
+  return new Promise(resolve =>
+    setTimeout(resolve, 2000, { status: 403 })
+  );
+}
+
+function safePublish() {
+  return publish().then(res => {
+    if (res.status === 403) {
+      return authenticate();
+    }
+    return res;
+  });
+}
+
+function timeout(sleep) {
+  return new Promise((resolve, reject) =>
+    setTimeout(reject, sleep, 'timeout...')
+  );
+}
+
+Promise.race([safePublish(), timeout(3000)])
+  .then(_ => console.log('Published'))
+  .catch(err => {
+    if (err === 'timeout') {
+      console.error('Request timed out');
+    } else {
+      console.error(err);
+    }
+  });
+/** Publishing
+ * Authenticating
+ * Error: timeout...  // because publish() take 2 second and autheticate() take 2 secode 2000+2000 = 4000 > timeout(3000)
+ */
