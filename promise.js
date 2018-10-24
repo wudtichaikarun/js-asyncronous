@@ -107,7 +107,28 @@ const files = ['text1.txt', 'text2.txt', 'text3.txt'];
 
 let promises = files.map(name => readFile(name, 'utf8'));
 
-Promise.all(promises).then(values => {
-  console.log(values);
-});
+Promise.all(promises)
+  .then(values => {
+    console.log(values);
+  })
+  .catch(err => console.error('---> Error:', err));
 // ********************************************************************************
+
+/** Promise.race */
+// Promise will return resolve or reject just firt value
+let car1 = new Promise(
+  resolve => setTimeout(resolve, 5000, 'Car 1.')
+  // setTimeout(reject, 1000, 'Car 1 is crashed.')
+);
+let car2 = new Promise(resolve =>
+  setTimeout(resolve, 2000, 'Car 2.')
+);
+let car3 = new Promise(resolve =>
+  setTimeout(resolve, 3000, 'Car 3.')
+);
+
+Promise.race([car1, car2, car3])
+  .then(value => {
+    console.log('Promise Resolved', value);
+  })
+  .catch(err => console.log('------> Promise reject', err));
