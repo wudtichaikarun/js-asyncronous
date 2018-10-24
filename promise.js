@@ -1,4 +1,4 @@
-//Question 3  Promise return Promise
+/** Question 3  Promise return Promise */
 const fs = require('fs');
 const zlib = require('zlib');
 
@@ -33,8 +33,9 @@ readFile('./text1.txt', 'utf8')
     },
     err => console.log('Fail To Gzip: ', err)
   );
+// ********************************************************************************
 
-// Error Handling
+/** Error Handling */
 Promise.reject('fail')
   .then(val => console.log(val))
   .then(val => console.log(val), err => console.log(err)); // fail
@@ -85,3 +86,28 @@ readFile('./text11111.txt', 'utf8')
     console.log(data);
   })
   .catch(err => console.error('----> Failed: ', err));
+// ********************************************************************************
+
+/** Finally */
+Promise.resolve('done')
+  .then(val => {
+    throw new Error('-------> fail');
+  })
+  .then(val => console.log(val)) // not invoked
+  .catch(err => console.error(err)) // invoked
+  .finally(_ => console.log('Cleaning Up')); // alway invoked
+// ********************************************************************************
+
+/** Multiple Promise --> Promise.all */
+const util = require('util');
+const fs = require('fs');
+const readFile = util.promisify(fs.readFile);
+
+const files = ['text1.txt', 'text2.txt', 'text3.txt'];
+
+let promises = files.map(name => readFile(name, 'utf8'));
+
+Promise.all(promises).then(values => {
+  console.log(values);
+});
+// ********************************************************************************
